@@ -1,0 +1,30 @@
+{
+  "name": "gptsafe",
+  "version": "0.1.0",
+  "description": "Prevent GPT prompt attacks for Node.js & TypeScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/redeux/GPTSafe.git"
+  },
+  "keywords": [
+    "GPT",
+    "prompt",
+    "attack",
+    "injection",
+    "ChatGPT",
+    "GPT-3",
+    "GPT3",
+    "GPT-2",
+    "GPT2"
+  ],
+  "author": "Phil Sautter",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/redeux/GPTSafe/issues"
+  },
+  "homepage": "https://github.com/redeux/GPTSafe#readme"
+}
