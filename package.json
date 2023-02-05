@@ -2,16 +2,22 @@
   "name": "gptsafe",
   "version": "0.1.0",
   "description": "Prevent GPT prompt attacks for Node.js & TypeScript",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "test": "jest",
     "build": "tsc --build",
-    "clean": "tsc --build --clean"
+    "clean": "tsc --build --clean",
+    "lint": "eslint \"./src/**/*.ts\""
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/redeux/GPTSafe.git"
   },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "keywords": [
     "GPT",
     "prompt",
