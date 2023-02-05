@@ -3,7 +3,7 @@
 <div align="center">
   <a href="https://github.com/GPTSafe/PromptSafe/blob/main/CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" /></a>
   <a href="https://github.com/GPTSafe/PromptSafe/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202-blue" /></a>
-    <a href="https://github.com/GPTSafe/PromptSafe/blob/main/LICENSE"><img src="https://img.shields.io/npm/v/promptsafe" /></a>
+    <a href="https://www.npmjs.com/package/promptsafe"><img src="https://img.shields.io/npm/v/promptsafe" /></a>
   <br />
   <br />
 </div>
