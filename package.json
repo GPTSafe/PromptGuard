@@ -1,5 +1,5 @@
 {
-  "name": "gptsafe",
+  "name": "promptsafe",
   "version": "0.1.1",
   "description": "Prevent GPT prompt attacks for Node.js & TypeScript",
   "main": "./dist/index.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/redeux/GPTSafe.git"
+    "url": "git+https://github.com/GPTSafe/PromptSafe.git"
   },
   "files": [
     "dist",
@@ -32,9 +32,9 @@
   "author": "Phil Sautter",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/redeux/GPTSafe/issues"
+    "url": "https://github.com/GPTSafe/PromptSafe/issues"
   },
-  "homepage": "https://github.com/redeux/GPTSafe#readme",
+  "homepage": "https://github.com/GPTSafe/PromptSafe#readme",
   "devDependencies": {
     "@jest/globals": "^29.4.1",
     "@typescript-eslint/eslint-plugin": "^5.50.0",

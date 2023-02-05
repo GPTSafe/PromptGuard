@@ -33,7 +33,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GPTSafe = void 0;
+exports.PromptSafe = void 0;
 const helper = __importStar(require("./helpers"));
 var Case;
 (function (Case) {
@@ -41,7 +41,7 @@ var Case;
     Case[Case["Upper"] = 1] = "Upper";
     Case[Case["Sentence"] = 2] = "Sentence";
 })(Case || (Case = {}));
-class GPTSafe {
+class PromptSafe {
     constructor(options = {
         maxTokens: 100,
         quoteInput: true,
@@ -74,4 +74,4 @@ class GPTSafe {
         });
     }
 }
-exports.GPTSafe = GPTSafe;
+exports.PromptSafe = PromptSafe;
