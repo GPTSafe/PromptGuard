@@ -1,7 +1,7 @@
-export function containsDenyListItems(
+export async function containsDenyListItems(
   prompt: string,
   denyList: string[]
-): boolean {
+): Promise<boolean> {
   try {
     prompt = prompt.toLowerCase();
   } catch {
