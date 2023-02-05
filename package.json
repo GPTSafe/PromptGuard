@@ -4,7 +4,9 @@
   "description": "Prevent GPT prompt attacks for Node.js & TypeScript",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "tsc --build",
+    "clean": "tsc --build --clean"
   },
   "repository": {
     "type": "git",
