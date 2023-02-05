@@ -1,3 +1,4 @@
+#!/usr/bin/env ts-node
 import * as helper from "./helpers";
 
 enum Case {
