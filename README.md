@@ -16,11 +16,23 @@ PromptSafe is still in a very early state. You can stay updated with new release
 ## Project Goals
 The goal of the PromptSafe project is to provide comprehensive sanitization and validation for potentially unsafe GPT prompts and inputs. 
 
-The following is a non-exhaustive list of proposed features:
-* Deny lists
-* Allow lists
-* Content filtering
-* Input length limiting
-* Input normalization
-* Input obfuscation
-* Output encoding
+## Usage
+Install 
+```sh
+npm install promptsafe
+```
+Configure (see `src/index.ts` for full configuration options)
+```js
+import { PromptSafe } from "promptsafe"
+
+const promptSafe = new PromptSafe({
+  maxTokens: 200,
+  escapeInput: true,
+  normalization: { normalizeUnicode: true, removeNewLineCharacters: true },
+  encodeOutput: true,
+});
+```
+Usage
+```js
+const output = await promptSafe.process("foo bar baz")
+```
