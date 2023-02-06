@@ -1,4 +1,4 @@
-![PromptSafe](https://i.imgur.com/0VKLJ37.png)
+![PromptSafe](https://i.imgur.com/a41Ht6V.png)
 
 <div align="center">
   <a href="https://github.com/GPTSafe/PromptSafe/blob/main/CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" /></a>
