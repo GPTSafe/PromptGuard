@@ -1,5 +1,5 @@
 #!/usr/bin/env ts-node
-import * as helper from "./utils";
+import * as util from "./utils";
 
 enum FAILURE_REASON {
   DENY_LIST = "Failed deny list validation",
@@ -47,8 +47,13 @@ export class PromptGuard {
     // processing order
     // normalize -> quote -> escape -> check tokens -> check allow list -> check deny list -> encode output
 
+    // check the tokens count
+    if (util.countTokens(prompt) > this.PromptGuardPolicy.maxTokens)
+      return { pass: false, output: FAILURE_REASON.MAX_TOKEN_THRESHOLD };
+
+    // check the deny list
     if (
-      await helper.containsDenyListItems(
+      await util.checkDenyListItems(
         prompt,
         this.PromptGuardPolicy.denyList,
         this.PromptGuardPolicy.ignoreDefaultDenyList

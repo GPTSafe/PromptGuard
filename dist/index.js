@@ -34,42 +34,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PromptGuard = void 0;
-const helper = __importStar(require("./helpers"));
-var Case;
-(function (Case) {
-    Case[Case["Lower"] = 0] = "Lower";
-    Case[Case["Upper"] = 1] = "Upper";
-    Case[Case["Sentence"] = 2] = "Sentence";
-})(Case || (Case = {}));
+const util = __importStar(require("./utils"));
+var FAILURE_REASON;
+(function (FAILURE_REASON) {
+    FAILURE_REASON["DENY_LIST"] = "Failed deny list validation";
+    FAILURE_REASON["MAX_TOKEN_THRESHOLD"] = "Failed max token threshold";
+})(FAILURE_REASON || (FAILURE_REASON = {}));
 class PromptGuard {
-    constructor(options = {
-        maxTokens: 100,
-        quoteInput: true,
-        escapeInput: false,
-        normalization: {
-            normalizeUnicode: true,
-            removeAllUnicode: false,
-            removeNewLineCharacters: true,
-        },
-        encodeOutput: false,
-    }) {
-        if (!(options === null || options === void 0 ? void 0 : options.ignoreDefaultDenyList))
-            options.ignoreDefaultDenyList = false;
-        if (!(options === null || options === void 0 ? void 0 : options.denyList))
-            options.denyList = [""];
-        this.options = options;
+    constructor(userPolicyOptions = {}) {
+        const defaultPromptGuardPolicy = {
+            maxTokens: 4096,
+            denyList: [""],
+            ignoreDefaultDenyList: false,
+            encodeOutput: false,
+        };
+        // merge the user policy with the default policy to create the policy
+        this.PromptGuardPolicy = Object.assign(Object.assign({}, defaultPromptGuardPolicy), userPolicyOptions);
     }
     process(prompt) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             // processing order
             // normalize -> quote -> escape -> check tokens -> check allow list -> check deny list -> encode output
-            if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.denyList) {
-                if (typeof ((_b = this.options) === null || _b === void 0 ? void 0 : _b.ignoreDefaultDenyList) === "boolean") {
-                    if (yield helper.containsDenyListItems(prompt, this.options.denyList, this.options.ignoreDefaultDenyList))
-                        return { pass: false, reason: "Deny list" };
-                }
-            }
+            // check the tokens count
+            if (util.countTokens(prompt) > this.PromptGuardPolicy.maxTokens)
+                return { pass: false, output: FAILURE_REASON.MAX_TOKEN_THRESHOLD };
+            // check the deny list
+            if (yield util.checkDenyListItems(prompt, this.PromptGuardPolicy.denyList, this.PromptGuardPolicy.ignoreDefaultDenyList))
+                return { pass: false, output: FAILURE_REASON.DENY_LIST };
             return { pass: true, output: prompt };
         });
     }
