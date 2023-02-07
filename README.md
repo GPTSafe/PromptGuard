@@ -19,20 +19,18 @@ The goal of the PromptGuard project is to provide comprehensive sanitization and
 ## Usage
 Install 
 ```sh
-npm install promptsafe
+npm install @gtpsafe/promptguard
 ```
 Configure (see `src/index.ts` for full configuration options)
 ```js
-import { PromptGuard } from "promptsafe"
+import { PromptGuard } from "@gtpsafe/promptguard"
 
-const promptSafe = new PromptGuard({
+const promptGuard = new PromptGuard({
   maxTokens: 200,
-  escapeInput: true,
-  normalization: { normalizeUnicode: true, removeNewLineCharacters: true },
-  encodeOutput: true,
+  denyList:['baz'],
 });
 ```
 Usage
 ```js
-const output = await promptSafe.process("foo bar baz")
+const output = await promptGuard.process("foo bar baz")
 ```
