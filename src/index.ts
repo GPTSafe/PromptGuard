@@ -31,7 +31,7 @@ type PromptOutput = {
   reason?: string; // provide the reason if the processing fails validation rules
 };
 
-export class PromptSafe {
+export class PromptGuard {
   options?: Options;
 
   constructor(
