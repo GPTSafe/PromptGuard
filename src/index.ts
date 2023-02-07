@@ -1,5 +1,5 @@
 #!/usr/bin/env ts-node
-import * as helper from "./helpers";
+import * as helper from "./utils";
 
 enum Case {
   Lower,
