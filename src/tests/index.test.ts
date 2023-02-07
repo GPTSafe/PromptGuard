@@ -18,6 +18,6 @@ test("Checks the value of an input that contains a default deny list item", asyn
   const output = await promptGuard.process(prompt);
   expect(output).toStrictEqual({
     pass: false,
-    reason: "Deny list",
+    output: "Failed deny list validation",
   });
 });
