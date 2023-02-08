@@ -9,19 +9,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.containsDenyListItems = void 0;
-function containsDenyListItems(prompt, userDenyList) {
+exports.containsKnownAttack = void 0;
+const attackDenyList = [
+    "ignore above",
+    "gnore the above",
+    "ignore previous instructions",
+    "ignore the previous instructions",
+    "ignore above instructions",
+    "ignore instructions above",
+    "ignore the above instructions",
+    "ignore above directions",
+    "ignore directions above",
+    "ignore the above directions",
+    "ignore the previous directions",
+    "ignore previous directions",
+];
+function containsKnownAttack(prompt) {
     return __awaiter(this, void 0, void 0, function* () {
-        prompt = prompt.toLowerCase();
-        if (userDenyList.length === 1 && userDenyList[0] === '')
-            return false;
-        // TODO implement fuzzy matching
-        for (const item of userDenyList) {
-            if (prompt.includes(item.toLowerCase())) {
+        prompt = prompt.toLocaleLowerCase();
+        for (const attack of attackDenyList) {
+            if (prompt.includes(attack)) {
                 return true;
             }
         }
         return false;
     });
 }
-exports.containsDenyListItems = containsDenyListItems;
+exports.containsKnownAttack = containsKnownAttack;
