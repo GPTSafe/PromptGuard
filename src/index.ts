@@ -9,7 +9,8 @@ import {
 enum FAILURE_REASON {
   DENY_LIST = 'CONTAINS_DENY_LIST_ITEM',
   MAX_TOKEN_THRESHOLD = 'EXCEEDS_MAX_TOKEN_THRESHOLD',
-  KNOWN_ATTACK = 'CONTAINS_KNOWN_ATTACK'
+  KNOWN_ATTACK = 'CONTAINS_KNOWN_ATTACK',
+  LANGUAGE_VALIDATION = "FAILED_LANGUAGE_VALIDATION"
 }
 
 type UserPolicyOptions = {
@@ -21,13 +22,13 @@ type UserPolicyOptions = {
 
 interface PromptGuardPolicy {
   maxTokens: number; // 1 token is ~4 characters in english
-  denyList: string[]; // this should be a fuzzy match
+  denyList: string[]; // this should use a fuzzy match but doesn't currently
   disableAttackMitigation: boolean;
   encodeOutput: boolean; // uses byte pair encoding to turn text into a series of integers
 }
 
 type PromptOutput = {
-  pass: boolean; // false if processing fails validation rules (max tokens, deny list, allow list)
+  pass: boolean; // false if processing fails validation rules 
   output: string | number[]; // provide the processed prompt or failure reason
 };
 
