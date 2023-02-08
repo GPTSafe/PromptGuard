@@ -9,19 +9,29 @@
 </div>
 
 ## What is PromptGuard?
-PromptGuard prevents GPT prompt attacks in Node.js and TypeScript backend applications.
-
-PromptGuard is still in a very early state. You can stay updated with new releases by clicking **watch** -> **custom** -> **releases** in the top right corner.
+PromptGuard helps you build production ready GPT apps for Node.js and TypeScript applications.
 
 ## Project Goals
-The goal of the PromptGuard project is to provide comprehensive sanitization and validation for potentially unsafe GPT prompts and inputs. 
+The goal of the PromptGuard project is to provide the features necessary to deploy GPT-based applications to production. This includes:
+
+* Detecting and mitigating prompt attacks
+* Caching to improve performance and reduce the cost of GPT queries 
+* Content filtering
+* Language filtering
+* Token limiting
+* GPT ready encoded outputs
+* Prompt Obfuscation
+
+PromptGuard is still a fairly young project and would love your contributions. If you wish to contribute, please read the [contribution guide](CONTRIBUTING.md) and [code of conduct](CODE_OF_CONDUCT.md) first. 
+
+Feature requests and bug reports are welcome!
 
 ## Usage
 Install 
 ```sh
 npm install @gtpsafe/promptguard
 ```
-Configure (see `src/index.ts` for full configuration options)
+Configure
 ```js
 import { PromptGuard } from "@gtpsafe/promptguard"
 
@@ -32,5 +42,5 @@ const promptGuard = new PromptGuard({
 ```
 Usage
 ```js
-const output = await promptGuard.process("foo bar baz")
+const output = await promptGuard.process("This is my awesome prompt. There are many like it, but this one is mine.")
 ```
