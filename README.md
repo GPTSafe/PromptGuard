@@ -53,7 +53,7 @@ Process a Prompt
 const output = await promptGuard.process("This is my awesome prompt. There are many like it, but this one is mine.")
 ```
 Output 
-```json
+```js
 {
   pass: true,
   output: "This is my awesome prompt. There are many like it, but this one is mine."
