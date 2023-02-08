@@ -1,5 +1,5 @@
 #!/usr/bin/env ts-node
-import * as util from "./utils";
+import { promptContainsDenyListItems, countPromptTokens, encodePromptOutput } from "./utils";
 
 enum FAILURE_REASON {
   DENY_LIST = "Failed deny list validation",
@@ -22,7 +22,7 @@ interface PromptGuardPolicy {
 
 type PromptOutput = {
   pass: boolean; // false if processing fails validation rules (max tokens, deny list, allow list)
-  output: string; // provide the processed prompt or failure reason
+  output: string | number[]; // provide the processed prompt or failure reason
 };
 
 export class PromptGuard {
@@ -48,18 +48,23 @@ export class PromptGuard {
     // normalize -> quote -> escape -> check tokens -> check allow list -> check deny list -> encode output
 
     // check the tokens count
-    if (util.countTokens(prompt) > this.PromptGuardPolicy.maxTokens)
+    if (countPromptTokens(prompt) > this.PromptGuardPolicy.maxTokens)
       return { pass: false, output: FAILURE_REASON.MAX_TOKEN_THRESHOLD };
 
     // check the deny list
     if (
-      await util.checkDenyListItems(
+      await promptContainsDenyListItems(
         prompt,
         this.PromptGuardPolicy.denyList,
         this.PromptGuardPolicy.ignoreDefaultDenyList
       )
     )
       return { pass: false, output: FAILURE_REASON.DENY_LIST };
+
+    if (this.PromptGuardPolicy.encodeOutput)
+      prompt = encodePromptOutput(prompt);
+
+      console.log(prompt)
 
     return { pass: true, output: prompt };
   }

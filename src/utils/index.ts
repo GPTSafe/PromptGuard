@@ -1,5 +1,6 @@
 import { containsDenyListItems } from "./denylist";
-export const checkDenyListItems = containsDenyListItems;
+export const promptContainsDenyListItems = containsDenyListItems;
 
 const encoder = require("./encoder");
-export const countTokens = encoder.countTokens;
+export const countPromptTokens = encoder.countTokens;
+export const encodePromptOutput = encoder.encode;
