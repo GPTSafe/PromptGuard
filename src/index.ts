@@ -1,9 +1,15 @@
 #!/usr/bin/env ts-node
-import { promptContainsDenyListItems, countPromptTokens, encodePromptOutput } from "./utils";
+import {
+  promptContainsDenyListItems,
+  countPromptTokens,
+  encodePromptOutput,
+  promptContainsKnownAttack,
+} from "./utils";
 
 enum FAILURE_REASON {
   DENY_LIST = "Failed deny list validation",
   MAX_TOKEN_THRESHOLD = "Failed max token threshold",
+  KNOWN_ATTACK = "Failed known attack validation",
 }
 
 type UserPolicyOptions = {
@@ -16,7 +22,7 @@ type UserPolicyOptions = {
 interface PromptGuardPolicy {
   maxTokens: number; // 1 token is ~4 characters in english
   denyList: string[]; // this should be a fuzzy match
-  ignoreDefaultDenyList: boolean;
+  ignoreAttackMitigation: boolean;
   encodeOutput: boolean; // uses byte pair encoding to turn text into a series of integers
 }
 
@@ -32,7 +38,7 @@ export class PromptGuard {
     const defaultPromptGuardPolicy: PromptGuardPolicy = {
       maxTokens: 4096,
       denyList: [""],
-      ignoreDefaultDenyList: false,
+      ignoreAttackMitigation: false,
       encodeOutput: false,
     };
 
@@ -47,24 +53,25 @@ export class PromptGuard {
     // processing order
     // normalize -> quote -> escape -> check tokens -> check allow list -> check deny list -> encode output
 
-    // check the tokens count
+    // check the prompt token count
     if (countPromptTokens(prompt) > this.PromptGuardPolicy.maxTokens)
       return { pass: false, output: FAILURE_REASON.MAX_TOKEN_THRESHOLD };
 
-    // check the deny list
+    // check prompt against known prompt attacks
+    if (await promptContainsKnownAttack(prompt))
+      return { pass: false, output: FAILURE_REASON.KNOWN_ATTACK };
+
+    // check prompt again the user defined deny list
     if (
-      await promptContainsDenyListItems(
-        prompt,
-        this.PromptGuardPolicy.denyList,
-        this.PromptGuardPolicy.ignoreDefaultDenyList
-      )
+      await promptContainsDenyListItems(prompt, this.PromptGuardPolicy.denyList)
     )
       return { pass: false, output: FAILURE_REASON.DENY_LIST };
 
+    // encode the prompt output if encodeOutput is set by the user
     if (this.PromptGuardPolicy.encodeOutput)
       prompt = encodePromptOutput(prompt);
 
-      console.log(prompt)
+    console.log(prompt);
 
     return { pass: true, output: prompt };
   }
