@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "Prevent GPT prompt attacks for Node.js & TypeScript",
   "main": "./dist/index.js",
-  "scripts": {
+    "scripts": {
     "test": "jest",
     "build": "tsc --build",
     "clean": "tsc --build --clean",
