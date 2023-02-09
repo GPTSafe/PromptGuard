@@ -1,9 +1,10 @@
-import { containsDenyListItems } from "./denylist";
-export const promptContainsDenyListItems = containsDenyListItems;
+export { containsDenyListItems } from "./denylist";
+// export const promptContainsDenyListItems = containsDenyListItems;
 
-import { containsKnownAttack } from "./attackmitigation";
-export const promptContainsKnownAttack = containsKnownAttack;
+export { containsKnownAttack } from "./attackmitigation";
+// export const promptContainsKnownAttack = containsKnownAttack;
 
-const encoder = require("./encoder");
-export const countPromptTokens = encoder.countTokens;
-export const encodePromptOutput = encoder.encode;
+// const encoder = require("./encoder");
+export { countTokens, encode } from './encoder'
+// export const countPromptTokens = countTokens;
+// export const encodePromptOutput = encode;

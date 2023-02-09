@@ -1,43 +1,43 @@
 // This file includes code which was modified from https://github.com/openai/gpt-2
 // This file inclused code which was modified from https://github.com/NickHeiner/GPT-3-Encoder
 
-// import { path } from "path";
-// import { fs } from "fs";
-// import { util } from "util";
+import * as path from "path";
+import * as fs from "fs";
+import * as util from "util";
 
-const path = require('path');
-const fs = require('fs');
-const util = require('util');
+// const path = require('path');
+// const fs = require('fs');
+// const util = require('util');
 
 const encoder = JSON.parse(
   fs.readFileSync(path.join(__dirname, "./encoder.json"))
 );
 const bpe_file = fs.readFileSync(path.join(__dirname, "./vocab.bpe"), "utf-8");
 
-const range = (x, y) => {
+const range = (x: string, y: string) => {
   const res = Array.from(Array(y).keys()).slice(x);
   return res;
 };
 
-const ord = (x) => {
+const ord = (x:string): number => {
   return x.charCodeAt(0);
 };
 
-const chr = (x) => {
+const chr = (x: number): string => {
   return String.fromCharCode(x);
 };
 
 const textEncoder = new util.TextEncoder("utf-8");
-const encodeStr = (str) => {
+const encodeStr = (str:string) => {
   return Array.from(textEncoder.encode(str)).map((x) => x.toString());
 };
 
 const textDecoder = new util.TextDecoder("utf-8");
-const decodeStr = (arr) => {
+const decodeStr = (arr: number[]) => {
   return textDecoder.decode(new Uint8Array(arr));
 };
 
-const dictZip = (x, y) => {
+const dictZip = (x: string[], y: string[]) => {
   const result = {};
   x.map((_, i) => {
     result[x[i]] = y[i];
@@ -70,7 +70,7 @@ function bytes_to_unicode() {
   return result;
 }
 
-function get_pairs(word) {
+function get_pairs(word: string[]) {
   const pairs = new Set();
   let prev_char = word[0];
   for (let i = 1; i < word.length; i++) {
@@ -107,13 +107,13 @@ Object.keys(byte_encoder).map((x) => {
 const bpe_ranks = dictZip(bpe_merges, range(0, bpe_merges.length));
 const cache = new Map();
 
-function bpe(token) {
+function bpe(token:string) {
   if (cache.has(token)) {
     return cache.get(token);
   }
   ``;
 
-  let word = token.split("");
+  let word: string[] = token.split("");
 
   let pairs = get_pairs(word);
 
@@ -143,7 +143,7 @@ function bpe(token) {
 
     const first = bigram[0];
     const second = bigram[1];
-    let new_word = [];
+    let new_word: string[] = [];
     let i = 0;
 
     while (i < word.length) {
@@ -182,7 +182,7 @@ function bpe(token) {
 // encoding each match using the encodeStr function and the byte_encoder mapping,
 // and then applying the bpe function to the encoded token. The number of tokens produced by the bpe function is then added to the count variable.
 // Finally, the count variable is returned as the result.
-function countTokens(text) {
+export function countTokens(text: string) {
   let count = 0;
   const matches = Array.from(text.matchAll(pat)).map((x) => x[0]);
   for (let token of matches) {
@@ -197,7 +197,7 @@ function countTokens(text) {
   return count;
 }
 
-function encode(text) {
+export function encode(text) {
   let bpe_tokens = [];
   const matches = Array.from(text.matchAll(pat)).map((x) => x[0]);
   for (let token of matches) {
@@ -215,14 +215,14 @@ function encode(text) {
   return bpe_tokens;
 }
 
-function decode(tokens) {
+export function decode(tokens) {
   let text = tokens.map((x) => decoder[x]).join("");
   text = decodeStr(text.split("").map((x) => byte_decoder[x]));
   return text;
 }
 
-module.exports = {
-  encode,
-  decode,
-  countTokens,
-};
+// module.exports = {
+//   encode,
+//   decode,
+//   countTokens,
+// };
