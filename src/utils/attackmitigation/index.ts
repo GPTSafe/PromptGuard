@@ -2,7 +2,7 @@ type DenyList = string[];
 
 const attackDenyList: DenyList = [
   "ignore above",
-  "gnore the above",
+  "ignore the above",
   "ignore previous instructions",
   "ignore the previous instructions",
   "ignore above instructions",
