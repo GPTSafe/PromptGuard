@@ -37,12 +37,17 @@ const decodeStr = (arr: string[]): string => {
 
 function dictZip(x: string[][], y: number[]): { [key: string]: number } {
   const result: { [key: string]: number } = {};
-  x.map((keyArr, i) => { result[keyArr.join('')] = y[i] });
+  x.map((keyArr, i) => {
+    result[keyArr.join('')] = y[i];
+  });
   return result;
 }
 
 function bytes_to_unicode(): { [key: number]: string } {
-  const bs: number[] = range(ord('!'), ord('~') + 1).concat(range(ord('¡'), ord('¬') + 1), range(ord('®'), ord('ÿ') + 1));
+  const bs: number[] = range(ord('!'), ord('~') + 1).concat(
+    range(ord('¡'), ord('¬') + 1),
+    range(ord('®'), ord('ÿ') + 1)
+  );
 
   const cs: number[] = bs.slice();
   let n = 0;
@@ -57,10 +62,11 @@ function bytes_to_unicode(): { [key: number]: string } {
   const csChars: string[] = cs.map(x => chr(x));
 
   const result: { [key: number]: string } = {};
-  bs.map((_, i) => { result[bs[i]] = csChars[i] });
+  bs.map((_, i) => {
+    result[bs[i]] = csChars[i];
+  });
   return result;
 }
-
 
 function get_pairs(word: string[]): Set<string[]> {
   const pairs = new Set<string[]>();
@@ -166,13 +172,20 @@ function bpe(token: string): string {
 
   const wordStr = word.join('');
   cache.set(token, wordStr);
-  
+
   return wordStr;
 }
 
 function encode(text: string): number[] {
+  let match: RegExpExecArray | null;
+  const matches: string[] = [];
   let bpe_tokens: number[] = [];
-  const matches = Array.from(text.matchAll(pat)).map(x => x[0]);
+  const regex = new RegExp(pat);
+
+  while ((match = regex.exec(text)) !== null) {
+    matches.push(match[0]);
+  }
+
   for (let token of matches) {
     token = encodeStr(token)
       .map(x => {
@@ -189,8 +202,17 @@ function encode(text: string): number[] {
 }
 
 function countTokens(text: string): number {
+  let match: RegExpExecArray | null;
+  const matches: string[] = [];
+  const regex = new RegExp(pat);
   let count = 0;
-  const matches = Array.from(text.matchAll(pat)).map(x => x[0]);
+  
+  while ((match = regex.exec(text)) !== null) {
+    matches.push(match[0]);
+  }
+  
+
+
   for (let token of matches) {
     token = encodeStr(token)
       .map(x => {
