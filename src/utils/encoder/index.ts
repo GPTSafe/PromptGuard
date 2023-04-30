@@ -1,25 +1,23 @@
 // This file includes code which was modified from https://github.com/openai/gpt-2
 // This file inclused code which was modified from https://github.com/NickHeiner/GPT-3-Encoder
 
-import * as path from "path";
-import * as fs from "fs";
-import * as util from "util";
+import * as fs from 'fs';
+import * as path from 'path';
 
-// const path = require('path');
-// const fs = require('fs');
-// const util = require('util');
-
-const encoder = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "./encoder.json"))
+const encoder: { [key: string]: number } = JSON.parse(
+  fs.readFileSync(path.join(__dirname, './encoder.json'), 'utf-8')
 );
-const bpe_file = fs.readFileSync(path.join(__dirname, "./vocab.bpe"), "utf-8");
+const bpe_file: string = fs.readFileSync(
+  path.join(__dirname, './vocab.bpe'),
+  'utf-8'
+);
 
-const range = (x: string, y: string) => {
+const range = (x: number, y: number): number[] => {
   const res = Array.from(Array(y).keys()).slice(x);
   return res;
 };
 
-const ord = (x:string): number => {
+const ord = (x: string): number => {
   return x.charCodeAt(0);
 };
 
@@ -27,31 +25,26 @@ const chr = (x: number): string => {
   return String.fromCharCode(x);
 };
 
-const textEncoder = new util.TextEncoder("utf-8");
-const encodeStr = (str:string) => {
-  return Array.from(textEncoder.encode(str)).map((x) => x.toString());
+const textEncoder = new TextEncoder();
+const encodeStr = (str: string): string[] => {
+  return Array.from(textEncoder.encode(str)).map(x => x.toString());
 };
 
-const textDecoder = new util.TextDecoder("utf-8");
-const decodeStr = (arr: number[]) => {
-  return textDecoder.decode(new Uint8Array(arr));
+const textDecoder = new TextDecoder();
+const decodeStr = (arr: string[]): string => {
+  return textDecoder.decode(new Uint8Array(arr.map(Number)));
 };
 
-const dictZip = (x: string[], y: string[]) => {
-  const result = {};
-  x.map((_, i) => {
-    result[x[i]] = y[i];
-  });
+function dictZip(x: string[][], y: number[]): { [key: string]: number } {
+  const result: { [key: string]: number } = {};
+  x.map((keyArr, i) => { result[keyArr.join('')] = y[i] });
   return result;
-};
+}
 
-function bytes_to_unicode() {
-  const bs = range(ord("!"), ord("~") + 1).concat(
-    range(ord("¡"), ord("¬") + 1),
-    range(ord("®"), ord("ÿ") + 1)
-  );
+function bytes_to_unicode(): { [key: number]: string } {
+  const bs: number[] = range(ord('!'), ord('~') + 1).concat(range(ord('¡'), ord('¬') + 1), range(ord('®'), ord('ÿ') + 1));
 
-  let cs = bs.slice();
+  const cs: number[] = bs.slice();
   let n = 0;
   for (let b = 0; b < 2 ** 8; b++) {
     if (!bs.includes(b)) {
@@ -61,17 +54,16 @@ function bytes_to_unicode() {
     }
   }
 
-  cs = cs.map((x) => chr(x));
+  const csChars: string[] = cs.map(x => chr(x));
 
-  const result = {};
-  bs.map((_, i) => {
-    result[bs[i]] = cs[i];
-  });
+  const result: { [key: number]: string } = {};
+  bs.map((_, i) => { result[bs[i]] = csChars[i] });
   return result;
 }
 
-function get_pairs(word: string[]) {
-  const pairs = new Set();
+
+function get_pairs(word: string[]): Set<string[]> {
+  const pairs = new Set<string[]>();
   let prev_char = word[0];
   for (let i = 1; i < word.length; i++) {
     const char = word[i];
@@ -84,36 +76,34 @@ function get_pairs(word: string[]) {
 const pat =
   /'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+/gu;
 
-const decoder = {};
-Object.keys(encoder).map((x) => {
+const decoder: { [key: number]: string } = {};
+Object.keys(encoder).map(x => {
   decoder[encoder[x]] = x;
 });
 
-const lines = bpe_file.split("\n");
+const lines = bpe_file.split('\n');
 
-// bpe_merges = [tuple(merge_str.split()) for merge_str in bpe_data.split("\n")[1:-1]]
-const bpe_merges = lines.slice(1, lines.length - 1).map((x) => {
+const bpe_merges: string[][] = lines.slice(1, lines.length - 1).map(x => {
   return x.split(/(\s+)/).filter(function (e) {
     return e.trim().length > 0;
   });
 });
 
 const byte_encoder = bytes_to_unicode();
-const byte_decoder = {};
-Object.keys(byte_encoder).map((x) => {
-  byte_decoder[byte_encoder[x]] = x;
+const byte_decoder: { [key: string]: string } = {};
+Object.keys(byte_encoder).map(x => {
+  byte_decoder[byte_encoder[Number(x)]] = x;
 });
 
 const bpe_ranks = dictZip(bpe_merges, range(0, bpe_merges.length));
-const cache = new Map();
+const cache: Map<string, string> = new Map<string, string>();
 
-function bpe(token:string) {
+function bpe(token: string): string {
   if (cache.has(token)) {
-    return cache.get(token);
+    return cache.get(token) as string;
   }
-  ``;
 
-  let word: string[] = token.split("");
+  let word = token.split('');
 
   let pairs = get_pairs(word);
 
@@ -121,24 +111,26 @@ function bpe(token:string) {
     return token;
   }
 
-  while (true) {
-    const minPairs = {};
-    Array.from(pairs).map((pair) => {
-      const rank = bpe_ranks[pair];
+  let shouldContinue = true;
+
+  while (shouldContinue) {
+    const minPairs: { [key: number]: string[] } = {};
+    Array.from(pairs).map(pair => {
+      const rank = bpe_ranks[pair.join('')];
       minPairs[isNaN(rank) ? 10e10 : rank] = pair;
     });
 
     const bigram =
       minPairs[
         Math.min(
-          ...Object.keys(minPairs).map((x) => {
+          ...Object.keys(minPairs).map(x => {
             return parseInt(x);
           })
         )
       ];
 
-    if (!(bigram in bpe_ranks)) {
-      break;
+    if (!(bigram.join('') in bpe_ranks)) {
+      shouldContinue = false;
     }
 
     const first = bigram[0];
@@ -150,7 +142,7 @@ function bpe(token:string) {
       const j = word.indexOf(first, i);
       if (j === -1) {
         new_word = new_word.concat(word.slice(i));
-        break;
+        shouldContinue = false;
       }
       new_word = new_word.concat(word.slice(i, j));
       i = j;
@@ -166,63 +158,55 @@ function bpe(token:string) {
 
     word = new_word;
     if (word.length === 1) {
-      break;
+      shouldContinue = false;
     } else {
       pairs = get_pairs(word);
     }
   }
 
-  word = word.join(" ");
-  cache.set(token, word);
-
-  return word;
+  const wordStr = word.join('');
+  cache.set(token, wordStr);
+  
+  return wordStr;
 }
 
-// This function works by iterating through the matches of the pat pattern in the input text,
-// encoding each match using the encodeStr function and the byte_encoder mapping,
-// and then applying the bpe function to the encoded token. The number of tokens produced by the bpe function is then added to the count variable.
-// Finally, the count variable is returned as the result.
-export function countTokens(text: string) {
-  let count = 0;
-  const matches = Array.from(text.matchAll(pat)).map((x) => x[0]);
+function encode(text: string): number[] {
+  let bpe_tokens: number[] = [];
+  const matches = Array.from(text.matchAll(pat)).map(x => x[0]);
   for (let token of matches) {
     token = encodeStr(token)
-      .map((x) => {
-        return byte_encoder[x];
+      .map(x => {
+        return byte_encoder[Number(x)];
       })
-      .join("");
-
-    count += bpe(token).split(" ").length;
-  }
-  return count;
-}
-
-export function encode(text) {
-  let bpe_tokens = [];
-  const matches = Array.from(text.matchAll(pat)).map((x) => x[0]);
-  for (let token of matches) {
-    token = encodeStr(token)
-      .map((x) => {
-        return byte_encoder[x];
-      })
-      .join("");
+      .join('');
 
     const new_tokens = bpe(token)
-      .split(" ")
-      .map((x) => encoder[x]);
+      .split(' ')
+      .map(x => encoder[x]);
     bpe_tokens = bpe_tokens.concat(new_tokens);
   }
   return bpe_tokens;
 }
 
-export function decode(tokens) {
-  let text = tokens.map((x) => decoder[x]).join("");
-  text = decodeStr(text.split("").map((x) => byte_decoder[x]));
+function countTokens(text: string): number {
+  let count = 0;
+  const matches = Array.from(text.matchAll(pat)).map(x => x[0]);
+  for (let token of matches) {
+    token = encodeStr(token)
+      .map(x => {
+        return byte_encoder[Number(x)];
+      })
+      .join('');
+
+    count += bpe(token).split(' ').length;
+  }
+  return count;
+}
+
+function decode(tokens: number[]): string {
+  let text = tokens.map(x => decoder[x]).join('');
+  text = decodeStr(text.split('').map(x => byte_decoder[x]));
   return text;
 }
 
-// module.exports = {
-//   encode,
-//   decode,
-//   countTokens,
-// };
+export { encode, decode, countTokens };
