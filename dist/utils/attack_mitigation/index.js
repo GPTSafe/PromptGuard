@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.containsKnownAttack = void 0;
 const attackDenyList = [
     "ignore above",
-    "gnore the above",
+    "ignore the above",
     "ignore previous instructions",
     "ignore the previous instructions",
     "ignore above instructions",

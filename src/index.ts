@@ -1,9 +1,9 @@
 #!/usr/bin/env ts-node
 import {
-  promptContainsDenyListItems,
-  countPromptTokens,
-  encodePromptOutput,
-  promptContainsKnownAttack
+  containsDenyListItems,
+  countTokens,
+  encode,
+  containsKnownAttack
 } from './utils';
 
 enum FAILURE_REASON {
@@ -54,24 +54,25 @@ export class PromptGuard {
     // normalize -> quote -> escape -> check tokens -> check cache -> check for known attacks -> check allow list -> check deny list -> encode output
 
     // check the prompt token count
-    if (countPromptTokens(prompt) > this.promptGuardPolicy.maxTokens)
+    if (countTokens(prompt) > this.promptGuardPolicy.maxTokens)
       return { pass: false, output: FAILURE_REASON.MAX_TOKEN_THRESHOLD };
 
     // check prompt against known prompt attacks
     if (!this.promptGuardPolicy.disableAttackMitigation) {
-      if (await promptContainsKnownAttack(prompt))
+      if (await containsKnownAttack(prompt))
         return { pass: false, output: FAILURE_REASON.KNOWN_ATTACK };
     }
 
     // check prompt again the user defined deny list
     if (
-      await promptContainsDenyListItems(prompt, this.promptGuardPolicy.denyList)
+      await containsDenyListItems(prompt, this.promptGuardPolicy.denyList)
     )
       return { pass: false, output: FAILURE_REASON.DENY_LIST };
 
     // encode the prompt output if encodeOutput is set by the user
-    if (this.promptGuardPolicy.encodeOutput)
-      prompt = encodePromptOutput(prompt);
+    if (this.promptGuardPolicy.encodeOutput) {
+      return { pass: true, output: encode(prompt) };
+    }
 
     return { pass: true, output: prompt };
   }
